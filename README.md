@@ -1,98 +1,121 @@
-# Gerência de Redes: Observabilidade e Simulação de Incidentes
+# Laboratório de Observabilidade
 
-## 📋 Descrição do Projeto
-Este repositório contém a implementação da **Prática 01** da disciplina de **Gerência de Redes** do curso de **Engenharia de Computação**, sob a orientação do **Prof. Douglas F. S. Nunes**. 
+API Node.js para práticas de engenharia de confiabilidade e observabilidade, integrada a uma stack completa de monitoramento.
 
-O objetivo principal do projeto é projetar, implementar e analisar um ambiente de observabilidade moderna utilizando containers Docker. O foco está no monitoramento centralizado, análise de telemetria (métricas e logs) e resposta a incidentes em tempo real aplicados a uma aplicação web estruturada.
+## Visão Geral do Sistema
+O projeto consiste em uma aplicação de gerenciamento de usuários (CRUD) com autenticação JWT, desenvolvida para servir como ambiente controlado para o estudo de métricas, logs e tracing. A aplicação simula cenários do mundo real, incluindo endpoints específicos para induzir falhas e gargalos de performance.
 
----
+**Público-alvo:** Estudantes de Engenharia de Software, SRE e DevOps.
 
-## 🚧 Status do Projeto
-> **⚠️ ESTADO ATUAL: EM FASE DE ESTRUTURAÇÃO**
-> O projeto encontra-se na fase inicial de design de arquitetura e configuração de ambiente. Os arquivos de configuração base, o esqueleto da aplicação e a orquestração inicial dos serviços estão sendo estruturados.
+## Arquitetura e Componentes Gerais
 
----
+O sistema é composto por uma arquitetura de micro-serviços contida, orquestrada via Docker Compose:
 
-## 🎯 Objetivos de Aprendizagem
-Ao concluir este projeto, a equipe será capaz de:
-* Implementar uma stack completa de observabilidade em ambiente containerizado.
-* Coletar, centralizar e analisar métricas de infraestrutura e logs de aplicação.
-* Criar dashboards profissionais e intuitivos no Grafana.
-* Detectar, investigar e mitigar incidentes reais de TI.
-* Correlacionar picos de consumo de recursos com falhas no código (Métricas ↔ Logs).
-* Aplicar conceitos práticos de *Site Reliability Engineering* (SRE), como SLIs e taxas de erro.
+### Diagrama de Fluxo
+- **Aplicação (Node.js):** Executa a lógica de negócio, expõe métricas Prometheus e grava logs estruturados em JSON.
+- **Prometheus:** Realiza o *scrape* das métricas expostas pela aplicação e pelo Node Exporter.
+- **Promtail:** Coleta os logs gravados em arquivo pela aplicação e os envia para o Loki.
+- **Loki:** Sistema de agregação de logs.
+- **Grafana:** Dashboard central para visualização de métricas (Prometheus) e logs (Loki).
+- **Node Exporter:** Coleta métricas de hardware e do sistema operacional host.
 
----
+### Tecnologias Utilizadas
+- **Runtime:** Node.js v18 (Alpine)
+- **Framework:** Express.js
+- **Banco de Dados:** SQLite (via `better-sqlite3`)
+- **Autenticação:** JSON Web Token (JWT) e BcryptJS
+- **Monitoramento:** Prometheus, Grafana, Loki, Promtail
 
-## 🧱 Requisitos do Projeto & Arquitetura
+## Pré-requisitos
+- Docker e Docker Compose (recomendado)
+- Node.js 18.x ou superior (para execução local sem Docker)
+- Cliente HTTP (Postman, Insomnia ou cURL)
 
-### 📦 1. Infraestrutura e Stack de Observabilidade
-O ambiente deve ser totalmente orquestrado via **Docker Compose**, contendo obrigatoriamente os seguintes componentes:
-* **Aplicação Web:** API Node.js simulando o serviço de produção.
-* **Prometheus:** Coleta e armazenamento de métricas baseadas em séries temporais.
-* **Node Exporter:** Coleta de métricas de hardware e do sistema operacional hospedeiro.
-* **Loki:** Sistema de agregação de logs focado em alta escalabilidade.
-* **Promtail:** Agente responsável por coletar e enviar os logs locais para o Loki.
-* **Grafana:** Plataforma de análise e visualização para a criação dos dashboards.
+## Instruções de Execução
 
-### 💻 2. Requisitos da Aplicação (Node.js)
-A aplicação alvo deve consistir em um serviço web funcional contendo:
-* Sistema de cadastro de usuários (CRUD completo).
-* Mecanismo de autenticação/login.
-* Geração de logs estruturados utilizando saída padrão (`console.log` / `console.error`).
-* **Endpoints Obrigatórios:**
-    * `POST /register` — Cadastro de novos usuários
-    * `POST /login` — Autenticação no sistema
-    * `GET /users` — Listagem de usuários
-    * `PUT /users/:id` — Atualização de dados cadastrais
-    * `DELETE /users/:id` — Remoção de usuários
+### Via Docker Compose (Recomendado)
+Para subir toda a stack (Aplicação + Monitoramento):
 
----
+```bash
+docker-compose up -d
+```
 
-## 📊 Plano de Observabilidade
+Após a inicialização, os serviços estarão disponíveis em:
+- **Aplicação:** http://localhost:3000
+- **Grafana:** http://localhost:3001 (Dashboards pré-configurados disponíveis)
+- **Prometheus:** http://localhost:9090
 
-### Métricas (Prometheus)
-* **Infraestrutura:** Monitoramento de uso de CPU, Memória, Redes e Armazenamento.
-* **Disponibilidade:** Verificação de *uptime* e status de saúde dos serviços.
+### Execução Local (Desenvolvimento)
+Para rodar apenas a aplicação Node.js:
 
-### Logs (Loki + Promtail)
-* Rastreamento do fluxo de requisições HTTP recebidas pela aplicação.
-* Monitoramento detalhado de falhas de autenticação (erros de login).
-* Captura de exceções e erros internos do sistema (Erros 500).
+1. Acesse o diretório da aplicação:
+   ```bash
+   cd app
+   ```
+2. Instale as dependências:
+   ```bash
+   npm install
+   ```
+3. Configure as variáveis de ambiente (veja seção abaixo).
+4. Inicie o servidor:
+   ```bash
+   npm run dev
+   ```
 
----
+### Variáveis de Ambiente
+A aplicação utiliza as seguintes variáveis (configuradas no `docker-compose.yml` ou via arquivo `.env`):
 
-## 🎨 Design do Dashboard (Grafana)
-O painel de controle será dividido em três blocos lógicos estruturados da seguinte forma:
+| Variável | Descrição | Valor Exemplo |
+| :--- | :--- | :--- |
+| `PORT` | Porta de escuta da API | `3000` |
+| `JWT_SECRET` | Chave secreta para assinatura de tokens | `chave-secreta-para-demo` |
+| `NODE_ENV` | Ambiente de execução | `production` ou `development` |
 
-1.  **🟦 BLOCO 1 — Infraestrutura:** Painéis com consumo de CPU, memória RAM e tráfego de rede (In/Out).
-2.  **🟩 BLOCO 2 — Aplicação:** Volume total de logs recebidos, taxa de erros percentual (`Error Rate %` - *Requisito Obrigatório*) e stream de logs em tempo real.
-3.  **🟥 BLOCO 3 — Incidentes:** Contador de erros agregados por minuto, identificação visual de picos de falha e painel comparativo correlacionando o uso de CPU com a ocorrência de erros.
+## Estrutura de Diretórios
+```text
+.
+├── app/                  # Código-fonte da API Node.js
+│   ├── data/             # Banco de Dados SQLite (persistente)
+│   ├── logs/             # Logs da aplicação (coletados pelo Promtail)
+│   ├── Dockerfile        # Definição da imagem da aplicação
+│   └── server.js         # Entrypoint e lógica principal
+├── monitoring/           # Configurações da Stack de Observabilidade
+│   ├── grafana/          # Dashboards e Data Sources
+│   ├── loki/             # Configuração de agregação de logs
+│   ├── prometheus/       # Regras de scrape de métricas
+│   └── promtail/         # Configuração de coleta de logs
+└── docker-compose.yml    # Orquestração de todos os serviços
+```
 
----
+## API / Interface
 
-## 🔥 Cenários de Incidentes para Simulação
-Durante as validações práticas, serão simulados e analisados obrigatoriamente três cenários críticos de incidentes:
-* **🔴 Incidente 1 — Alta Taxa de Erro:** Indução de falhas consecutivas no endpoint de login e geração em massa de respostas HTTP 500.
-* **🔴 Incidente 2 — Sobrecarga:** Geração de um loop de requisições pesadas simulando um ataque de negação de serviço ou vazamento de recursos, gerando estouro no uso de CPU.
-* **🔴 Incidente 3 — Instabilidade:** Simulação de problemas intermitentes na rede, gerando atrasos (*delays*), *timeouts* e logs de erro inconsistentes.
+### Endpoints de Negócio
+- `POST /register`: Criação de novo usuário.
+- `POST /login`: Autenticação e geração de token JWT.
+- `GET /users`: Listagem de usuários (Requer JWT).
+- `PUT /users/:id`: Atualização de e-mail (Requer JWT).
+- `DELETE /users/:id`: Remoção de usuário (Requer JWT).
 
----
+### Endpoints de Observabilidade e Diagnóstico
+- `GET /health`: Status de saúde da aplicação.
+- `GET /metrics`: Métricas no formato Prometheus.
 
-## 📅 Entregáveis e Cronograma
-* **Código-Fonte Completo:** Repositório com `docker-compose.yml`, códigos da aplicação e arquivos de configuração (`.yml`, `.ini`, etc.) compactados via Google Sala de Aula.
-* **Dashboard Exportado:** Arquivo `.json` contendo as configurações de painéis criadas no Grafana.
-* **Demonstração Prática:** Apresentação em laboratório agendada para os dias **13/05** e **27/05**, focando na execução e análise dos incidentes em tempo real.
+### Simulação de Incidentes
+Utilizados para gerar dados nos dashboards e testar alertas:
+- `GET /simulate-error`: Retorna erro 500 em 50% das requisições.
+- `GET /simulate-cpu`: Gera um pico de processamento (loop intensivo) por ~2 segundos.
+- `GET /simulate-delay`: Simula uma resposta lenta com timeout de 5 segundos.
 
----
+## Estado Atual e Limitações Conhecidas
+- **Funcional:** Autenticação, CRUD básico, métricas de latência/taxa de erro e integração de logs.
+- **Observabilidade:** Dashboards do Grafana são provisionados automaticamente via arquivos JSON em `monitoring/grafana/dashboard_files/`.
+- **Débito Técnico:** A aplicação utiliza um modelo monolítico simplificado em um único arquivo (`server.js`).
+- **Persistência:** O banco SQLite é persistido via volume no host.
 
-## 🧮 Critérios de Avaliação (Total: 5.0 pontos)
-| Critério | Peso | Descrição |
-| :--- | :---: | :--- |
-| **Configuração do Ambiente** | 20% | Orquestração correta de todos os containers via Docker Compose. |
-| **Coleta de Métricas e Logs** | 20% | Sucesso no fluxo de telemetria da aplicação e hosts até as bases de dados. |
-| **Qualidade do Dashboard** | 30% | Clareza visual, conformidade com os blocos pedidos e inclusão de métrica percentual. |
-| **Simulação de Incidentes** | 30% | Capacidade de reproduzir os cenários e explicá-los através dos gráficos. |
+## Contribuição
+1. Certifique-se de que todas as dependências estão instaladas.
+2. Siga o padrão de Commits Semânticos.
+3. Antes de submeter um PR, valide a execução local e via Docker.
 
----
-*Documento atualizado em 18/05/2026.*
+## Licença
+A definir.
