@@ -42,8 +42,12 @@
 
     <!-- DASHBOARD -->
     <main id="dashboard" class="hidden">
-      <div class="grid">
-        
+      <div class="tabs main-tabs">
+        <button class="tab active" data-main-tab="users">👥 Usuários</button>
+        <button class="tab" data-main-tab="inventory">📦 Estoque</button>
+      </div>
+
+      <div id="users-section" class="grid">
         <!-- USUÁRIOS -->
         <section class="card full-width">
           <h2>👥 Usuários</h2>
@@ -84,7 +88,73 @@
           <button onclick="logs.refresh()">Atualizar Logs</button>
           <div class="log-panel" id="app-log">Clique em "Atualizar Logs"...</div>
         </section>
+      </div>
 
+      <div id="inventory-section" class="grid hidden">
+        <!-- RESUMO -->
+        <section class="card full-width">
+          <h2>📊 Resumo de Estoque</h2>
+          <div class="summary-grid">
+            <div class="summary-item">
+              <span class="label">Total Produtos:</span>
+              <span id="sum-total-products" class="value">-</span>
+            </div>
+            <div class="summary-item alert">
+              <span class="label">Estoque Baixo:</span>
+              <span id="sum-low-stock" class="value">-</span>
+            </div>
+            <div class="summary-item">
+              <span class="label">Vendas (Hoje/Mês):</span>
+              <span id="sum-sales" class="value">-</span>
+            </div>
+            <div class="summary-item">
+              <span class="label">Compras (Hoje/Mês):</span>
+              <span id="sum-purchases" class="value">-</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- PRODUTOS -->
+        <section class="card full-width">
+          <h2>🍎 Produtos</h2>
+          <div class="form-inline">
+            <input type="text" id="prod-name" placeholder="Nome">
+            <input type="text" id="prod-cat" placeholder="Categoria" style="width: 100px;">
+            <input type="text" id="prod-unit" placeholder="Unid" style="width: 60px;">
+            <input type="number" id="prod-stock" placeholder="Estoque" style="width: 80px;">
+            <input type="number" id="prod-min" placeholder="Mínimo" style="width: 80px;">
+            <button onclick="inventory.addProduct()">Adicionar</button>
+          </div>
+          <table>
+            <thead>
+              <tr><th>ID</th><th>Nome</th><th>Cat.</th><th>Unid.</th><th>Estoque</th><th>Mín.</th><th>Ações</th></tr>
+            </thead>
+            <tbody id="products-table"></tbody>
+          </table>
+        </section>
+
+        <!-- MOVIMENTAÇÕES -->
+        <section class="card">
+          <h2>🛒 Nova Compra/Venda</h2>
+          <div class="form-stacked">
+            <label>Produto:</label>
+            <select id="mov-product"></select>
+            <label>Quantidade:</label>
+            <input type="number" id="mov-qty" value="1">
+            <div class="sim-grid">
+              <button class="btn secondary" onclick="inventory.registerPurchase()">➕ Compra</button>
+              <button class="btn warning" onclick="inventory.registerSale()">➖ Venda</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- HISTÓRICO -->
+        <section class="card">
+          <h2>⏳ Histórico Recente</h2>
+          <div class="log-panel" id="inventory-history">
+            Selecione um produto para ver o histórico...
+          </div>
+        </section>
       </div>
     </main>
   </div>
