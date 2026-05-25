@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gerência de Redes - Observabilidade</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div>
+        <h1>🔧 Gerência de Redes</h1>
+        <p class="subtitle">Lab de Observabilidade</p>
+      </div>
+      <div class="status-bar">
+        <span><span class="dot" id="status-dot"></span> <span id="status-text">Verificando...</span></span>
+        <span id="user-display" class="hidden">👤 <span id="username"></span></span>
+        <button class="btn-sm secondary hidden" id="logout-btn" onclick="auth.logout()">Sair</button>
+      </div>
+    </header>
+
+    <!-- AUTH -->
+    <section id="auth-section" class="card">
+      <div class="tabs">
+        <button class="tab active" data-tab="login">Login</button>
+        <button class="tab" data-tab="register">Cadastrar</button>
+      </div>
+      <div id="login-form">
+        <input type="text" id="login-user" placeholder="Usuário">
+        <input type="password" id="login-pass" placeholder="Senha">
+        <button onclick="auth.login()">Entrar</button>
+      </div>
+      <div id="register-form" class="hidden">
+        <input type="text" id="reg-user" placeholder="Usuário">
+        <input type="password" id="reg-pass" placeholder="Senha">
+        <input type="email" id="reg-email" placeholder="E-mail">
+        <button onclick="auth.register()">Cadastrar</button>
+      </div>
+      <div id="auth-msg" class="message"></div>
+    </section>
+
+    <!-- DASHBOARD -->
+    <main id="dashboard" class="hidden">
+      <div class="grid">
+        
+        <!-- USUÁRIOS -->
+        <section class="card full-width">
+          <h2>👥 Usuários</h2>
+          <div class="form-inline">
+            <input type="text" id="new-user" placeholder="Novo usuário">
+            <input type="email" id="new-email" placeholder="E-mail">
+            <button onclick="users.add()">Adicionar</button>
+          </div>
+          <table>
+            <thead>
+              <tr><th>ID</th><th>Usuário</th><th>E-mail</th><th>Criado</th><th>Ações</th></tr>
+            </thead>
+            <tbody id="users-table"></tbody>
+          </table>
+        </section>
+
+        <!-- SIMULAÇÃO -->
+        <section class="card full-width">
+          <h2>⚠️ Simulação de Incidentes</h2>
+          <div class="sim-grid">
+            <button class="btn warning" onclick="simulation.run('error')">💥 Erro Aleatório (50% 500)</button>
+            <button class="btn secondary" onclick="simulation.run('cpu')">🔥 CPU Spike (2s)</button>
+            <button class="btn secondary" onclick="simulation.run('delay')">⏱️ Delay (5s)</button>
+          </div>
+          <div class="log-panel" id="sim-log"></div>
+        </section>
+
+        <!-- MÉTRICAS -->
+        <section class="card">
+          <h2>📊 Métricas</h2>
+          <button onclick="window.open('/metrics', '_blank')">Ver /metrics</button>
+          <p class="hint">Prometheus coleta automaticamente em <code>/metrics</code></p>
+        </section>
+
+        <!-- LOGS -->
+        <section class="card">
+          <h2>📝 Logs</h2>
+          <button onclick="logs.refresh()">Atualizar Logs</button>
+          <div class="log-panel" id="app-log">Clique em "Atualizar Logs"...</div>
+        </section>
+
+      </div>
+    </main>
+  </div>
+
+  <script src="js/app.js"></script>
+</body>
+</html>

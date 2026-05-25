@@ -1,0 +1,205 @@
+/* ===== RESET & BASE ===== */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: #0f172a;
+  color: #e2e8f0;
+  min-height: 100vh;
+  line-height: 1.5;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* ===== HEADER ===== */
+header {
+  background: #1e293b;
+  padding: 20px;
+  border-radius: 12px;
+  margin-bottom: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: 1px solid #334155;
+}
+
+h1 { font-size: 1.5rem; color: #38bdf8; }
+.subtitle { font-size: 0.875rem; color: #94a3b8; }
+
+.status-bar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font-size: 0.875rem;
+}
+
+.dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #22c55e;
+}
+.dot.warn { background: #f59e0b; }
+.dot.error { background: #ef4444; }
+
+/* ===== CARDS ===== */
+.card {
+  background: #1e293b;
+  border-radius: 12px;
+  padding: 20px;
+  border: 1px solid #334155;
+}
+
+.card h2 {
+  font-size: 1.125rem;
+  margin-bottom: 16px;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.full-width { grid-column: 1 / -1; }
+
+/* ===== GRID ===== */
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+@media (max-width: 768px) {
+  .grid { grid-template-columns: 1fr; }
+  header { flex-direction: column; gap: 12px; text-align: center; }
+}
+
+/* ===== FORM ELEMENTS ===== */
+input, button, .btn {
+  width: 100%;
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1px solid #475569;
+  background: #0f172a;
+  color: #e2e8f0;
+  font-size: 0.9375rem;
+  margin-bottom: 12px;
+  font-family: inherit;
+}
+
+input:focus {
+  outline: none;
+  border-color: #38bdf8;
+}
+
+button, .btn {
+  background: #0ea5e9;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.2s;
+}
+
+button:hover, .btn:hover { background: #0284c7; }
+
+.btn.secondary { background: #475569; }
+.btn.secondary:hover { background: #334155; }
+
+.btn.danger { background: #dc2626; }
+.btn.danger:hover { background: #b91c1c; }
+
+.btn.warning { background: #f59e0b; color: #0f172a; }
+.btn.warning:hover { background: #d97706; }
+
+.btn-sm { width: auto; padding: 6px 12px; font-size: 0.75rem; margin: 0; }
+
+/* ===== TABS ===== */
+.tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.tab {
+  flex: 1;
+  background: #334155;
+  border: none;
+  padding: 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  color: #e2e8f0;
+  font-weight: 500;
+  transition: background 0.2s;
+}
+
+.tab.active { background: #0ea5e9; }
+
+/* ===== TABLE ===== */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+
+th, td {
+  text-align: left;
+  padding: 12px;
+  border-bottom: 1px solid #334155;
+}
+
+th { color: #94a3b8; font-weight: 500; }
+tr:hover { background: #334155; }
+
+.actions { display: flex; gap: 8px; }
+.actions button { width: auto; padding: 6px 12px; font-size: 0.75rem; margin: 0; }
+
+/* ===== FORM INLINE ===== */
+.form-inline {
+  display: grid;
+  grid-template-columns: 2fr 2fr 1fr;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+@media (max-width: 768px) {
+  .form-inline { grid-template-columns: 1fr; }
+}
+
+/* ===== SIMULATION ===== */
+.sim-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-top: 12px;
+}
+
+@media (max-width: 768px) {
+  .sim-grid { grid-template-columns: 1fr; }
+}
+
+/* ===== LOG PANEL ===== */
+.log-panel {
+  background: #0f172a;
+  border-radius: 8px;
+  padding: 12px;
+  font-family: 'Courier New', 'Consolas', monospace;
+  font-size: 0.75rem;
+  max-height: 200px;
+  overflow-y: auto;
+  margin-top: 12px;
+  border: 1px solid #334155;
+}
+
+.log-entry { margin-bottom: 4px; }
+.log-info { color: #22c55e; }
+.log-warn { color: #f59e0b; }
+.log-error { color: #ef4444; }
+
+/* ===== UTILITIES ===== */
+.hidden { display: none !important; }
+.message { margin-top: 16px; font-size: 0.875rem; min-height: 20px; }
+.hint { margin-top: 12px; font-size: 0.875rem; color: #94a3b8; }
+.hint code { background: #334155; padding: 2px 6px; border-radius: 4px; }
