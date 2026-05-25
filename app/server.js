@@ -109,6 +109,14 @@ function authMiddleware(req, res, next) {
   }
 }
 
+// Servir arquivos estáticos do frontend
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Rota raiz serve o SPA
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
 // ========== ROUTES ==========
 
 // POST /register
@@ -202,7 +210,7 @@ app.get('/simulate-delay', async (req, res) => {
 });
 
 // ========== START ==========
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {
   const startLog = {
     timestamp: new Date().toISOString(),
