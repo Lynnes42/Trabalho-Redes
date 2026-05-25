@@ -1,0 +1,25 @@
+{
+  "title": "Aplicação",
+  "panels": [
+    {
+      "title": "HTTP Requests Total",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "sum(rate(http_requests_total[5m])) by (method, route, status)",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+        "title": "Logs",
+        "type": "logs",
+        "targets": [
+          {
+            "expr": "{job=\"app\"}",
+            "refId": "A"
+          }
+        ]
+      }
+  ]
+}
