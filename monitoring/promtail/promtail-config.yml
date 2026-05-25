@@ -1,6 +1,5 @@
 server:
   http_listen_port: 9080
-  grpc_listen_port: 0
 
 positions:
   filename: /tmp/positions.yaml
@@ -26,3 +25,18 @@ scrape_configs:
           level:
           endpoint:
           status_code:
+
+  - job_name: docker
+    docker_sd_configs:
+      - host: unix:///var/run/docker.sock
+
+    relabel_configs:
+      - source_labels: ['__meta_docker_container_name']
+        target_label: 'container'
+
+      - source_labels: ['__meta_docker_container_name']
+        regex: '/(.*)'
+        target_label: 'container_name'
+
+      - source_labels: ['__meta_docker_container_log_stream']
+        target_label: 'logstream'

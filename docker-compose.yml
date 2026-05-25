@@ -1,75 +1,43 @@
-version: '3.8'
-
 services:
-  app:
-    build: ./app
-    container_name: gerencia-redes-app
-    ports:
-      - "3000:3000"
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
     volumes:
-      - ./app/data:/app/data
-      - app-logs:/app/logs
-    environment:
-      - JWT_SECRET=chave-secreta-para-demo
-      - NODE_ENV=production
-    networks:
-      - monitoring
-
+      - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+  
   node-exporter:
-    image: prom/node-exporter:latest
+    image: prom/node-exporter
     container_name: node-exporter
     ports:
       - "9100:9100"
-    networks:
-      - monitoring
-
-  prometheus:
-    image: prom/prometheus:latest
-    container_name: prometheus
-    ports:
-      - "9090:9090"
-    volumes:
-      - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
-    networks:
-      - monitoring
-
+    
   loki:
-    image: grafana/loki:latest
+    image: grafana/loki:3.6.7
     container_name: loki
+    command: -config.file=/etc/loki/local-config.yaml
+    volumes:
+      - ./monitoring/loki/local-config.yml:/etc/loki/local-config.yaml
     ports:
       - "3100:3100"
-    volumes:
-      - ./monitoring/loki/loki-config.yml:/etc/loki/local-config.yaml
-    networks:
-      - monitoring
 
   promtail:
-    image: grafana/promtail:latest
+    image: grafana/promtail:3.6.7
     container_name: promtail
     volumes:
-      - app-logs:/var/log/app:ro
-      - ./monitoring/promtail/promtail-config.yml:/etc/promtail/config.yml
-    command: -config.file=/etc/promtail/config.yml
-    networks:
-      - monitoring
-
+      - ./monitoring/promtail/promtail-config.yml:/etc/promtail/promtail-config.yaml
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: -config.file=/etc/promtail/promtail-config.yaml
+  
   grafana:
-    image: grafana/grafana:latest
+    image: grafana/grafana
     container_name: grafana
     ports:
-      - "3001:3000"
-    volumes:
-      - grafana-storage:/var/lib/grafana
-      - ./monitoring/grafana/datasources:/etc/grafana/provisioning/datasources
-      - ./monitoring/grafana/dashboards:/etc/grafana/provisioning/dashboards
-      - ./monitoring/grafana/dashboard_files:/var/lib/grafana/dashboards
-    networks:
-      - monitoring
+      - "3000:3000"
 
-volumes:
-  app-logs:
-  grafana-storage:
-
-networks:
-  monitoring:
-    driver: bridge
+  app:
+    build: ./app/src
+    container_name: app-node
+    ports:
+      - "4000:4000"
