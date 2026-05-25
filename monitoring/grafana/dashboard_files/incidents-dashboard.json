@@ -1,0 +1,15 @@
+{
+  "title": "Incidentes",
+  "panels": [
+    {
+      "title": "Error Rate %",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "sum(rate(http_requests_total{status=~\"5..\"}[5m])) / sum(rate(http_requests_total[5m])) * 100",
+          "refId": "A"
+        }
+      ]
+    }
+  ]
+}
