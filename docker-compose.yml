@@ -11,7 +11,7 @@ services:
     image: prom/node-exporter
     container_name: node-exporter
     ports:
-      - "9100:9100"
+      - "9101:9100"
     
   loki:
     image: grafana/loki:3.6.7
@@ -28,16 +28,21 @@ services:
     volumes:
       - ./monitoring/promtail/promtail-config.yml:/etc/promtail/promtail-config.yaml
       - /var/run/docker.sock:/var/run/docker.sock
+      - ./app/logs:/var/log/app
     command: -config.file=/etc/promtail/promtail-config.yaml
+    depends_on:
+      - loki
   
   grafana:
     image: grafana/grafana
     container_name: grafana
     ports:
-      - "3000:3000"
+      - "3001:3000"
 
   app:
-    build: ./app/src
-    container_name: app-node
+    build: ./app
+    container_name: gerencia-redes-app
     ports:
-      - "4000:4000"
+      - "3003:8080"
+    volumes:
+      - ./app/logs:/app/logs
