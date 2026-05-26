@@ -43,6 +43,7 @@ services:
     build: ./app
     container_name: gerencia-redes-app
     ports:
-      - "3003:8080"
+      - "3003:4000"
     volumes:
       - ./app/logs:/app/logs
+    restart: unless-stopped
